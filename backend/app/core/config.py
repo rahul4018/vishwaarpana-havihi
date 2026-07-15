@@ -20,11 +20,17 @@ class Settings(BaseSettings):
 
     ALGORITHM: str = Field(default="HS256")
 
+    JWT_ISSUER: str = Field(default="Vishwaarpana-Havihi")
+
+    JWT_AUDIENCE: str = Field(default="Vishwaarpana-Havihi-API")
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30)
 
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7)
 
-    BACKEND_CORS_ORIGINS: list[str] = Field(default=["http://localhost:3000"])
+    BACKEND_CORS_ORIGINS: list[str] = Field(
+        default=["http://localhost:3000"]
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
