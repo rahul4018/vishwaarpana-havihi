@@ -1,17 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.dependencies.auth import get_current_user
 from app.core.exceptions.http_exceptions import (
     DuplicateEmailError,
     InvalidCredentialsError,
     RoleNotFoundError,
 )
 from app.db.database import get_db
+from app.db.models.user import User
 from app.schemas import (
     LoginRequest,
     LoginResponse,
     RegisterRequest,
     RegisterResponse,
+    UserResponse,
 )
 from app.services import AuthService
 
@@ -76,3 +79,27 @@ def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(exc),
         ) from exc
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get current user",
+    description="Return the currently authenticated user.",
+)
+def get_me(
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Return the profile of the authenticated user.
+    """
+    return UserResponse(
+        id=str(current_user.id),
+        full_name=current_user.full_name,
+        email=current_user.email,
+        mobile=current_user.mobile,
+        role=current_user.role.name,
+        is_active=current_user.is_active,
+        is_verified=current_user.is_verified,
+    )

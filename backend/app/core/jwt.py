@@ -15,6 +15,8 @@ def _create_token(
     payload: dict[str, Any] = {
         "sub": subject,
         "type": token_type,
+        "iss": settings.JWT_ISSUER,
+        "aud": settings.JWT_AUDIENCE,
         "exp": datetime.now(UTC) + expires_delta,
         "iat": datetime.now(UTC),
     }
@@ -59,6 +61,8 @@ def decode_token(token: str) -> dict[str, Any]:
             token,
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
+            issuer=settings.JWT_ISSUER,
+            audience=settings.JWT_AUDIENCE,
         )
     except JWTError as exc:
         raise ValueError("Invalid or expired token.") from exc
