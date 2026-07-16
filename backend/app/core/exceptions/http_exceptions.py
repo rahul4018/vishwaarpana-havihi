@@ -8,3 +8,6 @@ class RoleNotFoundError(Exception):
 
 class InvalidCredentialsError(Exception):
     """Raised when login credentials are invalid."""
+
+class InvalidTokenError(Exception):
+    """Raised when a JWT is invalid, expired, or not a refresh token."""

@@ -5,6 +5,7 @@ from app.core.dependencies.auth import get_current_user
 from app.core.exceptions.http_exceptions import (
     DuplicateEmailError,
     InvalidCredentialsError,
+    InvalidTokenError,
     RoleNotFoundError,
 )
 from app.db.database import get_db
@@ -12,6 +13,8 @@ from app.db.models.user import User
 from app.schemas import (
     LoginRequest,
     LoginResponse,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
     RegisterRequest,
     RegisterResponse,
     UserResponse,
@@ -75,6 +78,32 @@ def login(
         return auth_service.login(request)
 
     except InvalidCredentialsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+        ) from exc
+
+
+@router.post(
+    "/refresh",
+    response_model=RefreshTokenResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Refresh access token",
+    description="Generate a new access token using a valid refresh token.",
+)
+def refresh_token(
+    request: RefreshTokenRequest,
+    db: Session = Depends(get_db),
+) -> RefreshTokenResponse:
+    """
+    Generate a new access token from a valid refresh token.
+    """
+    auth_service = AuthService(db)
+
+    try:
+        return auth_service.refresh_token(request)
+
+    except InvalidTokenError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(exc),

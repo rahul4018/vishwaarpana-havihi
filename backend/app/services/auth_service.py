@@ -5,11 +5,13 @@ from sqlalchemy.orm import Session
 from app.core.exceptions.http_exceptions import (
     DuplicateEmailError,
     InvalidCredentialsError,
+    InvalidTokenError,
     RoleNotFoundError,
 )
 from app.core.jwt import (
     create_access_token,
     create_refresh_token,
+    decode_token,
 )
 from app.core.security import (
     hash_password,
@@ -20,6 +22,8 @@ from app.repositories import RoleRepository, UserRepository
 from app.schemas import (
     LoginRequest,
     LoginResponse,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
     RegisterRequest,
     RegisterResponse,
     TokenResponse,
@@ -35,7 +39,10 @@ class AuthService:
         self.user_repository = UserRepository(db)
         self.role_repository = RoleRepository(db)
 
-    def register(self, request: RegisterRequest) -> RegisterResponse:
+    def register(
+        self,
+        request: RegisterRequest,
+    ) -> RegisterResponse:
         """
         Register a new user with the default DEVOTEE role.
         """
@@ -74,7 +81,10 @@ class AuthService:
             role=role.name,
         )
 
-    def login(self, request: LoginRequest) -> LoginResponse:
+    def login(
+        self,
+        request: LoginRequest,
+    ) -> LoginResponse:
         """
         Authenticate a user and return JWT access and refresh tokens.
         """
@@ -119,4 +129,54 @@ class AuthService:
                 access_token=access_token,
                 refresh_token=refresh_token,
             ),
+        )
+
+    def refresh_token(
+        self,
+        request: RefreshTokenRequest,
+    ) -> RefreshTokenResponse:
+        """
+        Generate a new access token using a valid refresh token.
+        """
+        try:
+            payload = decode_token(
+                request.refresh_token
+            )
+        except ValueError as exc:
+            raise InvalidTokenError(
+                "Invalid or expired refresh token."
+            ) from exc
+
+        if payload.get("type") != "refresh":
+            raise InvalidTokenError(
+                "Invalid refresh token."
+            )
+
+        email = payload.get("sub")
+
+        if email is None:
+            raise InvalidTokenError(
+                "Invalid refresh token."
+            )
+
+        user = self.user_repository.get_by_email(
+            email
+        )
+
+        if user is None:
+            raise InvalidTokenError(
+                "User not found."
+            )
+
+        if not user.is_active:
+            raise InvalidTokenError(
+                "User account is inactive."
+            )
+
+        access_token = create_access_token(
+            subject=str(user.email),
+        )
+
+        return RefreshTokenResponse(
+            access_token=access_token,
         )

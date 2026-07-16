@@ -61,3 +61,15 @@ class TokenResponse(BaseModel):
 class LoginResponse(BaseModel):
     user: RegisterResponse
     tokens: TokenResponse
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str = Field(
+        min_length=1,
+        examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+    )
+
+
+class RefreshTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
