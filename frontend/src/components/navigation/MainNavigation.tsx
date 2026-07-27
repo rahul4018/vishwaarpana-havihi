@@ -1,30 +1,17 @@
 "use client";
 
-import Link from "next/link";
-
 import { navigation } from "@/config/navigation";
+
+import NavItem from "./NavItem";
 
 export default function MainNavigation() {
   return (
-    <nav className="flex items-center gap-8">
+    <nav className="hidden items-center gap-1 lg:flex">
       {navigation.map((item) => (
-        <div key={item.id}>
-          {item.href ? (
-            <Link
-              href={item.href}
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-orange-600"
-            >
-              {item.title}
-            </Link>
-          ) : (
-            <button
-              type="button"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-orange-600"
-            >
-              {item.title}
-            </button>
-          )}
-        </div>
+        <NavItem
+          key={item.id}
+          item={item}
+        />
       ))}
     </nav>
   );
