@@ -1,7 +1,28 @@
-import type { LucideIcon } from "lucide-react";
+export type UserRole =
+  | "admin"
+  | "owner"
+  | "priest"
+  | "catering"
+  | "customer";
+
+export interface NavigationChild {
+  id: string;
+  title: string;
+  description?: string;
+  href: string;
+  icon?: string;
+  roles: UserRole[];
+}
+
+export interface NavigationSection {
+  title: string;
+  children: NavigationChild[];
+}
 
 export interface NavigationItem {
+  id: string;
   title: string;
-  href: string;
-  icon: LucideIcon;
+  href?: string;
+  roles: UserRole[];
+  sections?: NavigationSection[];
 }

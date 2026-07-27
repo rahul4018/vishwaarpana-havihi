@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import DashboardShell from "@/components/dashboard/DashboardShell";
+import AppShell from "@/components/layout/AppShell";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -9,9 +9,5 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
-  return (
-    <DashboardShell>
-      {children}
-    </DashboardShell>
-  );
+  return <AppShell>{children}</AppShell>;
 }
