@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
@@ -19,12 +21,16 @@ export default function HomePage() {
         </p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Button size="lg">
-            Book a Pooja
+          <Button asChild size="lg">
+            <Link href="/book-pooja">
+              Book a Pooja
+            </Link>
           </Button>
 
-          <Button variant="outline" size="lg">
-            Admin Login
+          <Button asChild variant="outline" size="lg">
+            <Link href="/login">
+              Admin Login
+            </Link>
           </Button>
         </div>
 

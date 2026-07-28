@@ -2,6 +2,7 @@
 
 import MainNavigation from "@/components/navigation/MainNavigation";
 import NotificationPanel from "@/components/notification/NotificationPanel";
+import ProfileDropdown from "@/components/profile/ProfileDropdown";
 import SearchBar from "@/components/search/SearchBar";
 
 export default function TopBar() {
@@ -34,12 +35,7 @@ export default function TopBar() {
 
           <NotificationPanel />
 
-          <button
-            type="button"
-            className="rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-100"
-          >
-            Rahul
-          </button>
+          <ProfileDropdown />
         </div>
       </div>
     </header>

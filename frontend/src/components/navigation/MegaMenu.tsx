@@ -7,7 +7,11 @@ import {
   Clock3,
   HeartHandshake,
   Image,
+  LucideIcon,
+  Package,
   PartyPopper,
+  Receipt,
+  Settings,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -18,88 +22,91 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 
+import type {
+  NavigationSection,
+  UserRole,
+} from "@/types/navigation";
+
 import MegaMenuSection from "./MegaMenuSection";
 
-export default function MegaMenu() {
+interface MegaMenuProps {
+  title: string;
+  sections: NavigationSection[];
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  Building2,
+  CalendarDays,
+  ClipboardList,
+  Clock3,
+  HeartHandshake,
+  Image,
+  Package,
+  PartyPopper,
+  Receipt,
+  Settings,
+  Sparkles,
+  Users,
+};
+
+export default function MegaMenu({
+  title,
+  sections,
+}: MegaMenuProps) {
+  /**
+   * TODO:
+   * Replace with logged-in user's role.
+   * Example:
+   * const currentRole = user.role;
+   */
+  const currentRole: UserRole = "admin";
+
+  const filteredSections = sections
+    .map((section) => ({
+      ...section,
+      children: section.children.filter((child) =>
+        child.roles.includes(currentRole)
+      ),
+    }))
+    .filter((section) => section.children.length > 0);
+
+  if (filteredSections.length === 0) {
+    return null;
+  }
+
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger>
-        Temple
+        {title}
       </NavigationMenuTrigger>
 
       <NavigationMenuContent>
-        <div className="grid w-[850px] grid-cols-3 gap-8 p-8">
-          <MegaMenuSection
-            title="Temple Management"
-            items={[
-              {
-                title: "Temple Information",
-                description: "Manage temple profile and basic information",
-                href: "/temple",
-                icon: <Building2 className="h-5 w-5" />,
-              },
-              {
-                title: "Temple Timings",
-                description: "Configure opening hours and schedules",
-                href: "/temple/timings",
-                icon: <Clock3 className="h-5 w-5" />,
-              },
-              {
-                title: "Gallery",
-                description: "Manage temple photos and media",
-                href: "/gallery",
-                icon: <Image className="h-5 w-5" />,
-              },
-            ]}
-          />
+        <div
+          className="grid gap-8 p-8"
+          style={{
+            gridTemplateColumns: `repeat(${filteredSections.length}, minmax(240px, 1fr))`,
+            minWidth: `${Math.max(filteredSections.length * 280, 850)}px`,
+          }}
+        >
+          {filteredSections.map((section) => (
+            <MegaMenuSection
+              key={section.title}
+              title={section.title}
+              items={section.children.map((child) => {
+                const Icon =
+                  iconMap[child.icon] ?? Building2;
 
-          <MegaMenuSection
-            title="Priest Management"
-            items={[
-              {
-                title: "Priests",
-                description: "Manage priest profiles and assignments",
-                href: "/priests",
-                icon: <Users className="h-5 w-5" />,
-              },
-              {
-                title: "Attendance",
-                description: "Track priest attendance records",
-                href: "/attendance",
-                icon: <ClipboardList className="h-5 w-5" />,
-              },
-              {
-                title: "Schedule",
-                description: "Manage priest schedules and availability",
-                href: "/schedule",
-                icon: <CalendarDays className="h-5 w-5" />,
-              },
-            ]}
-          />
-
-          <MegaMenuSection
-            title="Services"
-            items={[
-              {
-                title: "Poojas",
-                description: "Manage pooja offerings and pricing",
-                href: "/poojas",
-                icon: <Sparkles className="h-5 w-5" />,
-              },
-              {
-                title: "Festivals",
-                description: "Organize temple festivals and events",
-                href: "/festivals",
-                icon: <PartyPopper className="h-5 w-5" />,
-              },
-              {
-                title: "Donations",
-                description: "Track donations and contributions",
-                href: "/donations",
-                icon: <HeartHandshake className="h-5 w-5" />,
-              },
-            ]}
-          />
+                return {
+                  title: child.title,
+                  description: child.description,
+                  href: child.href,
+                  icon: (
+                    <Icon className="h-5 w-5 text-orange-500" />
+                  ),
+                };
+              })}
+            />
+          ))}
         </div>
       </NavigationMenuContent>
     </NavigationMenuItem>

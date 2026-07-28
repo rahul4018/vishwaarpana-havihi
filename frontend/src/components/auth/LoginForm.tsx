@@ -45,18 +45,16 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data);
-
       router.replace("/dashboard");
     } catch (error) {
       console.error(error);
     }
   };
 
-  const serverError =
-    axios.isAxiosError(loginMutation.error)
-      ? loginMutation.error.response?.data?.detail ??
-        loginMutation.error.message
-      : loginMutation.error?.message;
+  const serverError = axios.isAxiosError(loginMutation.error)
+    ? loginMutation.error.response?.data?.detail ??
+      loginMutation.error.message
+    : loginMutation.error?.message;
 
   return (
     <AuthCard
@@ -96,9 +94,10 @@ export default function LoginForm() {
 
             <button
               type="button"
-              onClick={() =>
-                setShowPassword(!showPassword)
+              aria-label={
+                showPassword ? "Hide password" : "Show password"
               }
+              onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-1/2 -translate-y-1/2"
             >
               {showPassword ? (
@@ -125,8 +124,8 @@ export default function LoginForm() {
         )}
 
         <Button
-          className="w-full"
           type="submit"
+          className="w-full"
           disabled={loginMutation.isPending}
         >
           {loginMutation.isPending ? (

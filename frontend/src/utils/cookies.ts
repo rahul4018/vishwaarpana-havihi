@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { STORAGE_KEYS } from "@/constants/storage";
 
 export const cookieStorage = {
-  getAccessToken() {
+  getAccessToken(): string | undefined {
     return Cookies.get(STORAGE_KEYS.ACCESS_TOKEN);
   },
 
@@ -17,7 +17,7 @@ export const cookieStorage = {
     Cookies.remove(STORAGE_KEYS.ACCESS_TOKEN);
   },
 
-  getRefreshToken() {
+  getRefreshToken(): string | undefined {
     return Cookies.get(STORAGE_KEYS.REFRESH_TOKEN);
   },
 

@@ -6,6 +6,7 @@ import "./globals.css";
 import AppProvider from "@/providers/AppProvider";
 import { env } from "@/config/env";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthInitializer } from "@/components/auth/AuthInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,8 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-background font-sans antialiased">
         <AppProvider>
+          <AuthInitializer />
+
           {children}
 
           <Toaster

@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { authService } from "./auth.service";
-import { useAuthStore } from "./auth.store";
+import { useAuthStore } from "@/store/auth.store";
 import type { LoginRequest } from "./auth.types";
 
 export function useLogin() {
@@ -13,11 +13,11 @@ export function useLogin() {
     mutationFn: (data: LoginRequest) => authService.login(data),
 
     onSuccess: (response) => {
-      setAuth({
-        user: response.user,
-        accessToken: response.tokens.access_token,
-        refreshToken: response.tokens.refresh_token,
-      });
+      setAuth(
+        response.user,
+        response.tokens.access_token,
+        response.tokens.refresh_token
+      );
     },
   });
 }
