@@ -1,13 +1,20 @@
 import type { ReactNode } from "react";
 
-import AppShell from "@/components/layout/AppShell";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
-interface DashboardLayoutProps {
+interface LayoutProps {
   children: ReactNode;
 }
 
-export default function DashboardLayout({
+export default function Layout({
   children,
-}: DashboardLayoutProps) {
-  return <AppShell>{children}</AppShell>;
+}: LayoutProps) {
+  return (
+    <ProtectedRoute>
+      <DashboardLayout>
+        {children}
+      </DashboardLayout>
+    </ProtectedRoute>
+  );
 }

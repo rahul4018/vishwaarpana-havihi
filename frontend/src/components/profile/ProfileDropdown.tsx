@@ -48,11 +48,11 @@ export default function ProfileDropdown() {
         <DropdownMenuLabel>
           <div className="space-y-1">
             <p className="font-semibold">
-              Rahul N
+              Admin
             </p>
 
             <p className="text-xs text-muted-foreground">
-              AI Engineer
+              vishwaarpana-havihi
             </p>
           </div>
         </DropdownMenuLabel>

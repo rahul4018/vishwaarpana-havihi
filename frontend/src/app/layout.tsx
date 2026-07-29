@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 
-import AppProvider from "@/providers/AppProvider";
 import { env } from "@/config/env";
-import { Toaster } from "@/components/ui/sonner";
+import AppProvider from "@/providers/AppProvider";
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,7 +55,9 @@ export default function RootLayout({
         <AppProvider>
           <AuthInitializer />
 
-          {children}
+          <main className="min-h-screen">
+            {children}
+          </main>
 
           <Toaster
             position="top-right"
