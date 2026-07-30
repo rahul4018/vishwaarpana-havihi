@@ -1,22 +1,20 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import QueryProvider from "./QueryProvider";
 import ThemeProvider from "./ThemeProvider";
 
-interface Props {
+interface AppProviderProps {
   children: ReactNode;
 }
 
 export default function AppProvider({
   children,
-}: Props) {
+}: AppProviderProps) {
   return (
     <ThemeProvider>
-      <QueryProvider>
-        {children}
-      </QueryProvider>
+      <QueryProvider>{children}</QueryProvider>
     </ThemeProvider>
   );
 }

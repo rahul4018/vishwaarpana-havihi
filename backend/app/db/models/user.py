@@ -15,6 +15,8 @@ class User(Base):
     User entity for authentication and authorization.
     """
 
+    __tablename__ = "user"
+
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -53,6 +55,12 @@ class User(Base):
     role: Mapped["Role"] = relationship(
         back_populates="users",
         lazy="joined",
+    )
+
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
     is_active: Mapped[bool] = mapped_column(

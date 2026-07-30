@@ -5,7 +5,7 @@ class RegisterRequest(BaseModel):
     full_name: str = Field(
         min_length=2,
         max_length=150,
-        examples=["Rahul N"],
+        examples=["Admin"],
     )
 
     email: EmailStr
@@ -13,7 +13,7 @@ class RegisterRequest(BaseModel):
     password: str = Field(
         min_length=8,
         max_length=128,
-        examples=["Rahul@123"],
+        examples=["Admin@123"],
     )
 
     mobile: str | None = Field(

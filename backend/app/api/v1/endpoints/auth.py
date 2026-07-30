@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.auth import get_current_user
+from app.core.dependencies.permissions import require_admin
 from app.core.exceptions.http_exceptions import (
     DuplicateEmailError,
     InvalidCredentialsError,
@@ -17,9 +18,9 @@ from app.schemas import (
     RefreshTokenResponse,
     RegisterRequest,
     RegisterResponse,
-    UserResponse,
 )
 from app.services import AuthService
+
 
 router = APIRouter(
     prefix="/auth",
@@ -112,23 +113,40 @@ def refresh_token(
 
 @router.get(
     "/me",
-    response_model=UserResponse,
     status_code=status.HTTP_200_OK,
     summary="Get current user",
     description="Return the currently authenticated user.",
 )
 def get_me(
     current_user: User = Depends(get_current_user),
-) -> UserResponse:
+) -> dict:
     """
     Return the profile of the authenticated user.
     """
-    return UserResponse(
-        id=str(current_user.id),
-        full_name=current_user.full_name,
-        email=current_user.email,
-        mobile=current_user.mobile,
-        role=current_user.role.name,
-        is_active=current_user.is_active,
-        is_verified=current_user.is_verified,
-    )
+    return {
+        "id": str(current_user.id),
+        "full_name": current_user.full_name,
+        "email": current_user.email,
+        "mobile": current_user.mobile,
+        "role": current_user.role.name,
+        "is_active": current_user.is_active,
+        "is_verified": current_user.is_verified,
+    }
+
+
+@router.get(
+    "/admin-test",
+    status_code=status.HTTP_200_OK,
+    summary="Admin test endpoint",
+    description="Accessible only to ADMIN and SUPER_ADMIN.",
+)
+def admin_test(
+    current_user: User = Depends(require_admin),
+) -> dict[str, str]:
+    """
+    Test endpoint for verifying Role-Based Access Control (RBAC).
+    """
+    return {
+        "message": f"Welcome {current_user.full_name}",
+        "role": current_user.role.name,
+    }   

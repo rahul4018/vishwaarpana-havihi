@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -13,6 +16,7 @@ def _create_token(
     extra_claims: dict[str, Any] | None = None,
 ) -> str:
     payload: dict[str, Any] = {
+        "jti": str(uuid.uuid4()),
         "sub": subject,
         "type": token_type,
         "iss": settings.JWT_ISSUER,
@@ -38,20 +42,24 @@ def create_access_token(
     return _create_token(
         subject=subject,
         expires_delta=timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
         ),
         token_type="access",
         extra_claims=extra_claims,
     )
 
 
-def create_refresh_token(subject: str) -> str:
+def create_refresh_token(
+    subject: str,
+    extra_claims: dict[str, Any] | None = None,
+) -> str:
     return _create_token(
         subject=subject,
         expires_delta=timedelta(
-            days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+            days=settings.REFRESH_TOKEN_EXPIRE_DAYS,
         ),
         token_type="refresh",
+        extra_claims=extra_claims,
     )
 
 
@@ -65,4 +73,6 @@ def decode_token(token: str) -> dict[str, Any]:
             audience=settings.JWT_AUDIENCE,
         )
     except JWTError as exc:
-        raise ValueError("Invalid or expired token.") from exc
+        raise ValueError(
+            "Invalid or expired token."
+        ) from exc

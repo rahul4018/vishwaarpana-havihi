@@ -1,3 +1,5 @@
+from typing import Callable
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -59,3 +61,34 @@ def get_current_user(
         )
 
     return user
+
+
+def require_roles(*allowed_roles: str) -> Callable:
+    """
+    Dependency to restrict endpoint access to users with specific roles.
+    """
+
+    def dependency(
+        current_user: User = Depends(get_current_user),
+    ) -> User:
+        user_role = None
+
+        # Supports either relationship or plain string role
+        if hasattr(current_user, "role") and current_user.role is not None:
+            if hasattr(current_user.role, "name"):
+                user_role = current_user.role.name
+            else:
+                user_role = str(current_user.role)
+
+        elif hasattr(current_user, "role_name"):
+            user_role = current_user.role_name
+
+        if user_role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to perform this action.",
+            )
+
+        return current_user
+
+    return dependency

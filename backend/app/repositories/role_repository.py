@@ -14,15 +14,38 @@ class RoleRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_by_name(self, name: str) -> Role | None:
-        statement = select(Role).where(Role.name == name)
+    def get_by_id(
+        self,
+        role_id: str,
+    ) -> Role | None:
+        statement = select(Role).where(
+            Role.id == role_id,
+        )
         return self.db.scalar(statement)
 
-    def get_all(self) -> list[Role]:
-        statement = select(Role).order_by(Role.name)
-        return list(self.db.scalars(statement).all())
+    def get_by_name(
+        self,
+        name: str,
+    ) -> Role | None:
+        statement = select(Role).where(
+            Role.name == name,
+        )
+        return self.db.scalar(statement)
 
-    def create(self, role: Role) -> Role:
+    def get_all(
+        self,
+    ) -> list[Role]:
+        statement = select(Role).order_by(
+            Role.name.asc(),
+        )
+        return list(
+            self.db.scalars(statement).all()
+        )
+
+    def create(
+        self,
+        role: Role,
+    ) -> Role:
         self.db.add(role)
         self.db.commit()
         self.db.refresh(role)
